@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="/css/fbrowse.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="http://storage.googleapis.com/el-static/test/filedata.js"></script>
+		<script src="/js/fbrowse.js"></script>
+	</head>
+	<body>
+		<button id="btn1">Click me!!!</button>
+		<pre></pre>
+	</body>
+
+		<script type="text/javascript">
+		filedata.getFilesForPath("/", function(err, files) {
+				console.log("Error: ", err);
+				console.log("Files: ", files);
+		});
+		</script>
+
+</html>
