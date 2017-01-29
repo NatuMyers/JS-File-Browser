@@ -42,14 +42,32 @@
 
 		<script type="text/javascript">
 
-		var payload = "/"
+
+		// minimalist way of getting url params (without any forms etc)
+		function getParameterByName(name, url) {
+				if (!url) {
+					url = window.location.href;
+				}
+				name = name.replace(/[\[\]]/g, "\\$&");
+				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+						results = regex.exec(url);
+				if (!results) return null;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+
+		var current_payload = window.location.pathname;
+		console.log(current_payload)
 
 
-			filedata.getFilesForPath("payload", function(err, files) {
+		filedata.getFilesForPath("payload", function(err, files) {
 
 				// loop through all the files in the directory
 				var markup = "<table cellpadding=\"0\" cellspacing=\"0\"><tbody><tr>";
 				var numberOfFiles = files.length;
+
+
+
 				for (var i = 0; i < numberOfFiles; i++) {
 
 					// This uses escape quotes: http://stackoverflow.com/questions/2004168/escape-quotes-in-javascript
@@ -61,10 +79,10 @@
 							 <div class=\"col s12 m64 l4\"> \
 						      <div class=\"card shake hoverable light-blue darken-4 \"> \
 						        <div class=\"card-image\"> \
-						          <img  src=\"/static/images/folder.png\" width= \"30px\"> \
+						          <img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
 						        </div> \
 						        <div class=\"card-content center truncate\"> \
-						          <a class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+						          <a onclick=\"goDeeper("+ "'" +files[i].name+ "'" +") \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 						        </div> \
 						      </div> \
 						    </div>"
@@ -83,9 +101,26 @@
 							}
 					}
 
+					// to go up a level
+
+					if (current_payload.length >= 2) { // "/" and "" are non-root payloads
+					markup = markup + " \
+					 <div class=\"col s12 m64 l4\"> \
+				      <div class=\"card shake hoverable white \"> \
+				        <div class=\"card-image\"> \
+				        </div> \
+				        <div class=\"card-content center truncate\"> \
+				          <a onclick=\"goUp()\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
+				        </div> \
+				      </div> \
+				    </div>"
+					}
+
+
 					if (i/3 == 0) {
 						var markup = markup + "<br>"
 					}
+
 
 					document.write(markup);
 					console.log("Error: ", err);
@@ -94,10 +129,30 @@
 		</script>
 
 		<script type="text/javascript">
-		// this is placed here because the DOM has to load 1st... http://stackoverflow.com/questions/14028959/why-does-jquery-or-a-dom-method-such-as-getelementbyid-not-find-the-element
-		document.getElementById("currentFileName_output").innerHTML = "i";
-		</script>
 
+		// the following is placed here because the DOM has to load 1st... http://stackoverflow.com/questions/14028959/why-does-jquery-or-a-dom-method-such-as-getelementbyid-not-find-the-element
+		document.getElementById("currentFileName_output").innerHTML = "i";
+
+		// go up a directory
+		function goUp() {
+			var directory = current_payload.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
+			// Basically cut off the last part of the array to go up a directory.
+			if (directory.length >= 1) { // else, it's the root directory anyway.
+				var new_payload = current_payload.replace(directory[directory.length - 1], '');
+			}
+				// now GO.
+				window.location.href = new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
+		}
+
+		// go in a directory
+		function goDeeper(foldername) {
+			// Append to the end of the current payload
+			var new_payload = current_payload.concat("/"+foldername);
+			// now GO.
+			window.location.href = current_payload+new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
+		}
+
+		</script>
 
 		</div>
 	</body>
