@@ -27,130 +27,127 @@
     <script src="/static/js/custom.js"></script>
 	</head>
 
-	<body onload="displayMyVar('target');" class="grey lighten-4">
-
+	<body class="grey lighten-4">
 		<div class="container">
-
-
-
-
 			<span id="target"></span>
 			<pre></pre>
 
 			<div class="row">
 
 
-		<script type="text/javascript">
+			<script type="text/javascript">
+
+			// minimalist way of getting url params (without any forms etc)
+			function getParameterByName(name, url) {
+					if (!url) {
+						url = window.location.href;
+					}
+					name = name.replace(/[\[\]]/g, "\\$&");
+					var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+							results = regex.exec(url);
+					if (!results) return null;
+					if (!results[2]) return '';
+					return decodeURIComponent(results[2].replace(/\+/g, " "));
+			}
+
+			var current_payload = window.location.pathname;
+			console.log(current_payload)
 
 
-		// minimalist way of getting url params (without any forms etc)
-		function getParameterByName(name, url) {
-				if (!url) {
-					url = window.location.href;
-				}
-				name = name.replace(/[\[\]]/g, "\\$&");
-				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-						results = regex.exec(url);
-				if (!results) return null;
-				if (!results[2]) return '';
-				return decodeURIComponent(results[2].replace(/\+/g, " "));
-		}
+			filedata.getFilesForPath("payload", function(err, files) {
 
-		var current_payload = window.location.pathname;
-		console.log(current_payload)
+					// loop through all the files in the directory
+					var markup = "";
+					var numberOfFiles = files.length;
 
+					for (var i = 0; i < numberOfFiles; i++) {
 
-		filedata.getFilesForPath("payload", function(err, files) {
+						// This uses escape quotes: http://stackoverflow.com/questions/2004168/escape-quotes-in-javascript
+						// and a multiline strings: http://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript
+						// to build something like this: http://jsfiddle.net/wmkNe/1/
 
-				// loop through all the files in the directory
-				var markup = "<table cellpadding=\"0\" cellspacing=\"0\"><tbody><tr>";
-				var numberOfFiles = files.length;
-
-
-
-				for (var i = 0; i < numberOfFiles; i++) {
-
-					// This uses escape quotes: http://stackoverflow.com/questions/2004168/escape-quotes-in-javascript
-					// and a multiline strings: http://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript
-					// to build something like this: http://jsfiddle.net/wmkNe/1/
-
-					if (files[i].isFolder) {
-							markup = markup + " \
-							 <div class=\"col s12 m64 l4\"> \
-						      <div class=\"card shake hoverable light-blue darken-4 \"> \
-						        <div class=\"card-image\"> \
-						          <img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
-						        </div> \
-						        <div class=\"card-content center truncate\"> \
-						          <a onclick=\"goDeeper("+ "'" +files[i].name+ "'" +") \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
-						        </div> \
-						      </div> \
-						    </div>"
-							} else {
+						if (files[i].isFolder) {
 								markup = markup + " \
 								 <div class=\"col s12 m64 l4\"> \
-							      <div class=\"card shake hoverable light-green darken-3 \"> \
+							      <div class=\"card shake hoverable light-blue darken-4 \"> \
 							        <div class=\"card-image\"> \
-							          <img  src=\"/static/images/file.png\" width= \"30px\"> \
+							          <img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
 							        </div> \
-							        <div class=\"card-content center\"> \
-							          <a class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+							        <div class=\"card-content center truncate\"> \
+											\<!-- we pass the file in as a string, not a var. http://stackoverflow.com/questions/5504515/javascript-variable-is-not-defined -->\
+							          <a onclick=\"goDeeper("+ "'" +files[i].name+ "'" +") \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 							        </div> \
 							      </div> \
 							    </div>"
-							}
-					}
+								} else {
+									markup = markup + " \
+									 <div class=\"col s12 m64 l4\"> \
+								      <div class=\"card shake hoverable light-green darken-3 \"> \
+								        <div class=\"card-image\"> \
+								          <img  src=\"/static/images/file.png\" width= \"30px\"> \
+								        </div> \
+								        <div class=\"card-content center\"> \
+								          <a class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+								        </div> \
+								      </div> \
+								    </div>"
+								}
+						}
 
-					// to go up a level
+						// to go up a level
+						if (current_payload.length >= 2) { // appears when not in root.  "/" and "" are non-root payloads
+						markup = markup + " \
+						 <div class=\"col s12 m64 l4\"> \
+					      <div class=\"card shake hoverable white \"> \
+					        <div class=\"card-image\"> \
+					        </div> \
+					        <div class=\"card-content center truncate\"> \
+					          <a onclick=\"goUp()\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
+					        </div> \
+					      </div> \
+					    </div>"
+						}
 
-					if (current_payload.length >= 2) { // "/" and "" are non-root payloads
-					markup = markup + " \
-					 <div class=\"col s12 m64 l4\"> \
-				      <div class=\"card shake hoverable white \"> \
-				        <div class=\"card-image\"> \
-				        </div> \
-				        <div class=\"card-content center truncate\"> \
-				          <a onclick=\"goUp()\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
-				        </div> \
-				      </div> \
-				    </div>"
-					}
+						if (i/3 == 0) {
+							var markup = markup + "<br>"
+						}
 
+						document.write(markup); // write the js-rendered html
+						console.log("Error: ", err);
+						console.log("Files: ", files); // files is an array of our...FILES! (like typing ls)
+				});
+			</script>
 
-					if (i/3 == 0) {
-						var markup = markup + "<br>"
-					}
+			<script type="text/javascript">
 
+			// the following is placed here because the DOM has to load 1st... http://stackoverflow.com/questions/14028959/why-does-jquery-or-a-dom-method-such-as-getelementbyid-not-find-the-element
 
-					document.write(markup);
-					console.log("Error: ", err);
-					console.log("Files: ", files); // files is an array of our...FILES! (like typing ls)
-			});
-		</script>
-
-		<script type="text/javascript">
-
-		// the following is placed here because the DOM has to load 1st... http://stackoverflow.com/questions/14028959/why-does-jquery-or-a-dom-method-such-as-getelementbyid-not-find-the-element
-		document.getElementById("currentFileName_output").innerHTML = "i";
-
-		// go up a directory
-		function goUp() {
-			var directory = current_payload.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
-			// Basically cut off the last part of the array to go up a directory.
-			if (directory.length >= 1) { // else, it's the root directory anyway.
-				var new_payload = current_payload.replace(directory[directory.length - 1], '');
+			// go up a directory
+			function goUp() {
+				var directory = current_payload.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
+				// Basically cut off the last part of the array to go up a directory.
+				if (directory.length >= 1) { // else, it's the root directory anyway.
+					var new_payload = current_payload.replace(directory[directory.length - 1], '');
+				}
+					// now GO.
+					window.location.href = new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
 			}
-				// now GO.
-				window.location.href = new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
-		}
 
-		// go in a directory
-		function goDeeper(foldername) {
-			// Append to the end of the current payload
-			var new_payload = current_payload.concat("/"+foldername);
-			// now GO.
-			window.location.href = current_payload+new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
-		}
+			// go in a directory
+			function goDeeper(foldername) {
+				// Append to the end of the current payload
+				var new_payload = current_payload.concat("/"+foldername);
+				// now GO.
+				window.location.href = current_payload + new_payload;
+			}
+
+			// go in a directory
+			function goView(filename) {
+				// Append to the end of the current payload
+				var new_payload = current_payload.concat("/"+foldername);
+				// now GO.
+				window.location.href = window.location.hostname + new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
+			}
 
 		</script>
 
