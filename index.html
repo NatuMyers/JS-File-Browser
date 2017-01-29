@@ -41,7 +41,11 @@
 
 
 		<script type="text/javascript">
-			filedata.getFilesForPath("/Documents", function(err, files) {
+
+		var payload = "/"
+
+
+			filedata.getFilesForPath("payload", function(err, files) {
 
 				// loop through all the files in the directory
 				var markup = "<table cellpadding=\"0\" cellspacing=\"0\"><tbody><tr>";
@@ -59,7 +63,7 @@
 						        <div class=\"card-image\"> \
 						          <img  src=\"/static/images/folder.png\" width= \"30px\"> \
 						        </div> \
-						        <div class=\"card-content center\"> \
+						        <div class=\"card-content center truncate\"> \
 						          <a class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 						        </div> \
 						      </div> \
