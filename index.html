@@ -18,16 +18,21 @@
     <link rel="shortcut icon" href="/static/img/favicon.ico"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/css/materialize.min.css" media="screen" title="no title">
+    <link rel="stylesheet" href="/static/css/animate.css" media="screen" title="no title">
 		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Julius+Sans+One">
 
     <!-- load order is extremely important -->
     <!-- jquery THEN materialize THEN custom -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="/static/js/materialize.min.js"></script>
+
     <script src="/static/js/custom.js"></script>
+
+		<!-- how we keep track of files. this is yuuge -->
 		<script type="text/javascript">
 			window.directory = ""
 		</script>
+
 	</head>
 
 	<body class="grey lighten-4">
@@ -37,6 +42,7 @@
 
 			<div class="row">
 
+				<!-- the template is loaded here -->
 				<div id="template"></div>
 
 			<script type="text/javascript">
@@ -69,7 +75,7 @@
 							if (files[i].isFolder) {
 									markup = markup + " \
 									 <div class=\"col s12 m64 l4\"> \
-											<div class=\"card shake hoverable light-blue darken-4 \"> \
+											<div class=\"card zoomInUp shake hoverable light-blue darken-4 \"> \
 												<div class=\"card-image\"> \
 													<img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
 												</div> \
@@ -90,7 +96,7 @@
 														<img  src=\"/static/images/file.png\" width= \"30px\"> \
 													</div> \
 													<div class=\"card-content center\"> \
-														<a class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+														<a data-target=\"#filemodal\" class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 													</div> \
 												</div> \
 											</div>"
@@ -105,7 +111,7 @@
 										<div class=\"card-image\"> \
 										</div> \
 										<div class=\"card-content center truncate\"> \
-											<a onclick=\"goUp()\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
+											<a onclick=\"window.parse(goUp())\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
 										</div> \
 									</div> \
 								</div>"
@@ -119,10 +125,11 @@
 							// document.write(markup); // write the js-rendered html
 							div=document.getElementById('template');
 							div.innerHTML = markup;
+
 							// for debug purposes
 							console.log("Error: ", err);
 							console.log("Files: ", files); // files is an array of our...FILES! (like typing ls)
-							console.log("pay:" + payload);
+							console.log("Payload:" + payload);
 					}
 				});
 			}
@@ -130,36 +137,42 @@
 				// this sets things off. happens once
 			window.parse("/")
 
-
-
-
 			// go up a directory
 			function goUp() {
-				var directory = current_payload.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
-				// Basically cut off the last part of the array to go up a directory.
-				if (directory.length >= 1) { // else, it's the root directory anyway.
-					var new_payload = current_payload.replace(directory[directory.length - 1], ''); // remove the last filename
+				var directory = window.directory.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
+
+				var target = window.directory.replace(directory[directory.length - 1], ''); // remove the last filename
+				console.log("dirrr: " + target)
+
+				// now GO.
+				if (directory.length <= 2) {
+			 		window.directory = target; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
 				}
-					// now GO.
-					window.location.href = new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
+
+				//return this update as well.
+				return target;
 			}
 
 			// go in a directory
 			// this function gets
 			function goDeeper(foldername) { // ex: Documents. just the directory or foldername
 
-				var target =  "/" + foldername; //  append current to know where we came from
+				var target = ""
+
+				// making sure things remain good once switching between goUp and goDeeper
+				if (window.directory == "/") {
+					target = foldername
+				} else {
+					target =  "/" + foldername; //  append current to know where we came from
+				}
 
 				window.directory = window.directory + target;
-				target = window.directory;
 
+				target = window.directory;
 				console.log("Win var: " + window.directory)
 
-				// now GO.
-				//window.location.href = "#"+target; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
-				return target
-
-				// window.location.href = "#" + new_payload;
+				//return this update as well.
+				return target;
 			}
 
 			// go in a directory
@@ -180,6 +193,7 @@
 		</script>
 
 		</div>
+
 	</body>
 
 </html>
