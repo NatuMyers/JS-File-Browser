@@ -34,17 +34,17 @@
 
 			<div class="row">
 
-
 			<script type="text/javascript">
-
-
-			filedata.getFilesForPath( (payload="#/".replace('#','')) , function(err, files) {
+				// add the function to th window object because the scope is wayy to small http://stackoverflow.com/questions/2223305/how-can-i-make-a-function-defined-in-jquery-ready-available-globally
+				window.parse = function myself(payload="#/".replace('#','')) {
+					filedata.getFilesForPath( (payload) , function(err, files){
+					console.log("Current Payload: " + payload); // for debug
 
 					// loop through all the files in the directory
 					var markup = ""; // to be rendered
 					var numberOfFiles = files.length;
 
-					// we call render view like this on the root page
+					// we call render view like this on IF we're on the root page
 					if ( (("window.location.href".match(/#/g) || []).length) < 1 ) {
 						renderView() // call it (at root)
 					}
@@ -52,9 +52,7 @@
 					// the idea is to keep calling renderView by appending stuff to payload when we get deeper
 
 					// RENDER VIEW
-					function renderView(payload="#/", markup = "", numberOfFiles = files.length) {
-						console.log("Current Payload: " + payload); // for debug
-
+					function renderView(payload="#/", markup = "", numberOfFiles = files.length, will_update = false) {
 						for (var i = 0; i < numberOfFiles; i++) {
 
 							// This uses escape quotes: http://stackoverflow.com/questions/2004168/escape-quotes-in-javascript
@@ -64,31 +62,31 @@
 							if (files[i].isFolder) {
 									markup = markup + " \
 									 <div class=\"col s12 m64 l4\"> \
-								      <div class=\"card shake hoverable light-blue darken-4 \"> \
-								        <div class=\"card-image\"> \
-								          <img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
-								        </div> \
-								        <div class=\"card-content center truncate\"> \
+											<div class=\"card shake hoverable light-blue darken-4 \"> \
+												<div class=\"card-image\"> \
+													<img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
+												</div> \
+												<div class=\"card-content center truncate\"> \
 												\
 												\<!-- we pass the file in as a string, not a var. http://stackoverflow.com/questions/5504515/javascript-variable-is-not-defined  \
 												 and do a nested function call to render with a new payload. -->\
 												 \
-								          <a onclick=\"goDeeper("+ "'" + files[i].name+ "'" + ") \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
-								        </div> \
-								      </div> \
-								    </div>"
+													<a onclick=\"window.parse(goDeeper("+ "'" + files[i].name+ "'" + ")) \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+												</div> \
+											</div> \
+										</div>"
 									} else {
 										markup = markup + " \
 										 <div class=\"col s12 m64 l4\"> \
-									      <div class=\"card shake hoverable light-green darken-3 \"> \
-									        <div class=\"card-image\"> \
-									          <img  src=\"/static/images/file.png\" width= \"30px\"> \
-									        </div> \
-									        <div class=\"card-content center\"> \
-									          <a class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
-									        </div> \
-									      </div> \
-									    </div>"
+												<div class=\"card shake hoverable light-green darken-3 \"> \
+													<div class=\"card-image\"> \
+														<img  src=\"/static/images/file.png\" width= \"30px\"> \
+													</div> \
+													<div class=\"card-content center\"> \
+														<a class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+													</div> \
+												</div> \
+											</div>"
 									}
 							}
 
@@ -96,14 +94,14 @@
 							if (payload.length > 3) { // appears when not in root.  "/" and "" are non-root payloads
 							markup = markup + " \
 							 <div class=\"col s12 m64 l4\"> \
-						      <div class=\"card shake hoverable white \"> \
-						        <div class=\"card-image\"> \
-						        </div> \
-						        <div class=\"card-content center truncate\"> \
-						          <a onclick=\"goUp()\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
-						        </div> \
-						      </div> \
-						    </div>"
+									<div class=\"card shake hoverable white \"> \
+										<div class=\"card-image\"> \
+										</div> \
+										<div class=\"card-content center truncate\"> \
+											<a onclick=\"goUp()\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
+										</div> \
+									</div> \
+								</div>"
 							}
 
 							// to partition it
@@ -116,15 +114,11 @@
 							// for debug purposes
 							console.log("Error: ", err);
 							console.log("Files: ", files); // files is an array of our...FILES! (like typing ls)
-
 					}
 				});
-			</script>
+			}
 
-			<script type="text/javascript">
-
-			// the following is placed here because the DOM has to load 1st... http://stackoverflow.com/questions/14028959/why-does-jquery-or-a-dom-method-such-as-getelementbyid-not-find-the-element
-
+				window.parse()
 			// go up a directory
 			function goUp() {
 				var directory = current_payload.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
@@ -141,8 +135,14 @@
 
 				var target = "/" + (window.location.hash + foldername).replace('#','')
 				console.log(target)
-				filedata.getFilesForPath(target, renderView(target))
+				return target
+
 				// window.location.href = "#" + new_payload;
+			}
+
+			function thisisme(target){
+				filedata.getFilesForPath( (payload="target".replace('#','')), thisisme(8) )
+
 			}
 
 			// go in a directory
@@ -156,7 +156,6 @@
 				current_payload = new_payload // directory update!
 				console.log("Current Payload: " + current_payload); // for debug
 			}
-
 
 		</script>
 		</div>
