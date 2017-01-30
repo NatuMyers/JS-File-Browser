@@ -162,31 +162,23 @@
 			// go in a directory
 			// this function gets
 			function goDeeper(foldername) { // ex: Documents. just the directory or foldername
-
 				var target = ""
 
 				// making sure things remain good once switching between goUp and goDeeper
 				if (window.directory == "/") {
+					// 1a. if we're at root don't douplicate the slash
 					target = foldername
 				} else {
+					// 1b if we're non-root, append a slash
 					target =  "/" + foldername; //  append current to know where we came from
 				}
 
+				// 2. update window object.  window.directory = "X/Y/" and target is ""/Z", "X/Y/" -> "X/Y" these lines are doing this: "X/Y/" + "/Z" = "X/Y/Z"
 				window.directory.slice(0, -1);
+				window.directory = window.directory + target; //
 
-				window.directory = window.directory + target;
-
-
-
+				// 3. Assign it to our return value as well
 				target = window.directory;
-
-				// telling the program that trailing slashes are ok for nonroot directories. i.e: "Documents/" = "Documents"  so we're triming the slash.
-				if ( (target.charAt(window.directory.length - 1) == "/") && (length.target>=2) ) {
-					target = target.slice(0, -1);
-				}
-
-				console.log("Win var: " + window.directory)
-
 
 				//return this update as well.
 				return target;
