@@ -5,16 +5,11 @@
 	filedata API and an event handler. Feel free to start fresh!
 */
 
-$("button").on("click", function()
-{
-    filedata.getFilesForPath("/", function(err, files)
-    {
-    	if(err)
-    	{
+$("button").on("click", function() {
+    filedata.getFilesForPath("/", function(err, files) {
+    	if(err) {
     		$("pre").text("ERROR: "+JSON.stringify(err));
-    	}
-    	else
-    	{
+    	} else	{
     		$("pre").text(JSON.stringify(files, null, "\t"));
     	}
     });
