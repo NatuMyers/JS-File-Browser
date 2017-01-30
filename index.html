@@ -142,12 +142,20 @@
 				var directory = window.directory.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
 
 				var target = window.directory.replace(directory[directory.length - 1], ''); // remove the last filename
-				console.log("dirrr: " + target)
 
 				// now GO.
-				if (directory.length <= 2) {
-			 		window.directory = target; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
+				if (window.directory.charAt(window.directory.length - 1) == "/" ) {
+			 		window.directory = target;
 				}
+
+
+				// telling the program that trailing slashes are ok for nonroot directories. i.e: "Documents/" = "Documents"  so we're triming the slash.
+				if ( (target.charAt(target.length - 1) == "/") && (target.length>=2) ) {
+					target = target.slice(0, -1);
+					console.log("Trailing slash removed. ") // debug
+				}
+
+				console.log("dirrr: " + target.charAt(target.length - 1))
 
 				//return this update as well.
 				return target;
@@ -166,10 +174,21 @@
 					target =  "/" + foldername; //  append current to know where we came from
 				}
 
+				window.directory.slice(0, -1);
+
 				window.directory = window.directory + target;
 
+
+
 				target = window.directory;
+
+				// telling the program that trailing slashes are ok for nonroot directories. i.e: "Documents/" = "Documents"  so we're triming the slash.
+				if ( (target.charAt(window.directory.length - 1) == "/") && (length.target>=2) ) {
+					target = target.slice(0, -1);
+				}
+
 				console.log("Win var: " + window.directory)
+
 
 				//return this update as well.
 				return target;
@@ -180,7 +199,10 @@
 				// Append to the end of the current payload
 				var new_payload = ""
 
+
+
 				 new_payload = current_payload.concat("/"+foldername);
+
 				// now GO.
 				window.location.href = window.location.hostname + new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
 
