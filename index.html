@@ -139,23 +139,21 @@
 
 			// go up a directory
 			function goUp() {
+
+				// 1. Split X/Y/Z to [X,Y,Z]
 				var directory = window.directory.split('/'); // http://stackoverflow.com/questions/5269856/how-to-split-comma-separated-string-using-javascript
 
+				// 2. X/Y/Z -> X/Y/
 				var target = window.directory.replace(directory[directory.length - 1], ''); // remove the last filename
 
-				// now GO.
-				if (window.directory.charAt(window.directory.length - 1) == "/" ) {
-			 		window.directory = target;
-				}
-
-
-				// telling the program that trailing slashes are ok for nonroot directories. i.e: "Documents/" = "Documents"  so we're triming the slash.
+				// 3. X/Y/ -> X/Y (telling the program that trailing slashes are ok for nonroot directories. i.e: "Documents/" = "Documents"  so we're triming the slash.)
 				if ( (target.charAt(target.length - 1) == "/") && (target.length>=2) ) {
 					target = target.slice(0, -1);
 					console.log("Trailing slash removed. ") // debug
 				}
 
-				console.log("dirrr: " + target.charAt(target.length - 1))
+				// 4. Assign to window object
+			 	window.directory = target;
 
 				//return this update as well.
 				return target;
