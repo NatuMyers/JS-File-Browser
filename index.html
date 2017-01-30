@@ -25,6 +25,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="/static/js/materialize.min.js"></script>
     <script src="/static/js/custom.js"></script>
+		<script type="text/javascript">
+			window.directory = ""
+		</script>
 	</head>
 
 	<body class="grey lighten-4">
@@ -38,11 +41,9 @@
 
 			<script type="text/javascript">
 				// add the function to th window object because the scope is wayy to small when the js rendered html calls a function http://stackoverflow.com/questions/2223305/how-can-i-make-a-function-defined-in-jquery-ready-available-globally
-				window.parse = function myself(payload="#/".replace('#','')) {
-					filedata.getFilesForPath( (payload) , function(err, files){
+				window.parse = function myself(payload) {
+					filedata.getFilesForPath( (payload) , function(err, files=payload){
 					console.log("Current Payload: " + payload); // for debug
-
-
 
 					// loop through all the files in the directory
 					var markup = ""; // to be rendered
@@ -50,17 +51,15 @@
 
 					// we call render view like this on IF we're on the root page
 					if ( (("window.location.href".match(/#/g) || []).length) < 1 ) {
-						renderView() // call it (at root)
-					} else { // if we are NOT at the root...
-
+						renderView(payload) // call it (at root)
+					} else { // if we are NOT at the root...TODO
 						renderView(payload)
-
 					}
 
 					// the idea is to keep calling renderView by appending stuff to payload when we get deeper
 
 					// RENDER VIEW
-					function renderView(payload="#/", markup = "", numberOfFiles = files.length, will_update = false) {
+					function renderView(payload, markup = "", numberOfFiles = files.length, will_update = false) {
 						for (var i = 0; i < numberOfFiles; i++) {
 
 							// This uses escape quotes: http://stackoverflow.com/questions/2004168/escape-quotes-in-javascript
@@ -68,7 +67,6 @@
 							// to build something like this: http://jsfiddle.net/wmkNe/1/
 
 							if (files[i].isFolder) {
-
 									markup = markup + " \
 									 <div class=\"col s12 m64 l4\"> \
 											<div class=\"card shake hoverable light-blue darken-4 \"> \
@@ -80,7 +78,7 @@
 												\<!-- we pass the file in as a string, not a var. http://stackoverflow.com/questions/5504515/javascript-variable-is-not-defined  \
 												 and do a nested function call to render with a new payload. -->\
 												 \
-													<a onclick=\"window.parse(goDeeper("+ "'" + files[i].name+ "'" + ")) \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+												 <a onclick=\"window.parse(goDeeper("+ "'" + files[i].name+ "'" + ")) \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 												</div> \
 											</div> \
 										</div>"
@@ -100,7 +98,7 @@
 							}
 
 							// to go up a level
-							if (payload.length > 3) { // appears when not in root.  "/" and "" are non-root payloads
+							if (payload.length > 1) { // appears when not in root.  "/" and "" are non-root payloads
 							markup = markup + " \
 							 <div class=\"col s12 m64 l4\"> \
 									<div class=\"card shake hoverable white \"> \
@@ -124,11 +122,14 @@
 							// for debug purposes
 							console.log("Error: ", err);
 							console.log("Files: ", files); // files is an array of our...FILES! (like typing ls)
+							console.log("pay:" + payload);
 					}
 				});
 			}
 
-				window.parse()
+				// this sets things off. happens once
+			window.parse("/")
+
 
 
 
@@ -144,24 +145,28 @@
 			}
 
 			// go in a directory
+			// this function gets
 			function goDeeper(foldername) { // ex: Documents. just the directory or foldername
 
-				var target = "/" + (window.location.hash + foldername).replace('#','')
-				console.log(target)
+				var target =  "/" + foldername; //  append current to know where we came from
+
+				window.directory = window.directory + target;
+				target = window.directory;
+
+				console.log("Win var: " + window.directory)
+
+				// now GO.
+				//window.location.href = "#"+target; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
 				return target
 
 				// window.location.href = "#" + new_payload;
-			}
-
-			function thisisme(target){
-				filedata.getFilesForPath( (payload="target".replace('#','')), thisisme(8) )
-
 			}
 
 			// go in a directory
 			function goView(filename) {
 				// Append to the end of the current payload
 				var new_payload = ""
+
 				 new_payload = current_payload.concat("/"+foldername);
 				// now GO.
 				window.location.href = window.location.hostname + new_payload; // http://stackoverflow.com/questions/1226714/how-to-get-browser-to-navigate-to-url-in-javascript
@@ -169,6 +174,8 @@
 				current_payload = new_payload // directory update!
 				console.log("Current Payload: " + current_payload); // for debug
 			}
+
+
 
 		</script>
 
