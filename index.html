@@ -8,7 +8,7 @@
 
     <title>File Viewer</title>
 
-    <link rel="shortcut icon" href="/static/img/favicon.ico"></link>
+    <link rel="shortcut icon" href="/static/images/favicon.ico"></link>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<!-- this is how we connecting to the api's "files" -->
@@ -51,7 +51,6 @@
 					var markup = ""; // to be rendered
 					var numberOfFiles = files.length; // to render
 
-
 					renderView(payload)
 
 					// RENDER VIEW
@@ -65,7 +64,7 @@
 							if (files[i].isFolder) {
 									markup = markup + " \
 									 <div class=\"col s12 m64 l4\"> \
-											<div class=\"card animated zoomInUp bounce hoverable light-blue darken-4 \"> \
+											<div class=\"card animated zoomInLeft  hoverable light-blue darken-4 \"> \
 												<div class=\"card-image\"> \
 													<img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
 												</div> \
@@ -81,13 +80,13 @@
 									} else { // not folder
 										markup = markup + " \
 										 <div class=\"col s12 m64 l4\"> \
-												<div class=\"card animated zoomInUp bounce hoverable light-green darken-3 \"> \
+												<div class=\"card animated zoomInLeft  hoverable light-green darken-3 \"> \
 													<div class=\"card-image\"> \
 														<img  src=\"/static/images/file.png\" width= \"30px\"> \
 													</div> \
 													<div class=\"card-content center\"> \
-														<a data-target=\"#filemodal\" class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">Open</a> \
-														<div class=\"white-text\"><br>" +  files[i].name +  "</div>\
+														<!-- They can't be opened...... <a data-target=\"#filemodal\" class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">Open</a>--> \
+														<div class=\"white-text\"><br>" +  files[i].name +  "<br>" + files[i].size/1000000 + " MB" + "</div>\
 													</div> \
 												</div> \
 											</div>"
@@ -98,7 +97,7 @@
 							if (payload.length > 1) { // appears when not in root.  "/" and "" are non-root payloads
 							markup = markup + " \
 							 <div class=\"col s12 m64 l4\"> \
-									<div class=\"card animated zoomInUp bounce  hoverable white \"> \
+									<div class=\"card animated zoomInUp   hoverable white \"> \
 										<div class=\"card-image\"> \
 										</div> \
 										<div class=\"card-content center truncate\"> \
@@ -190,12 +189,7 @@
 				console.log("Current Payload: " + current_payload); // for debug
 			}
 
-
-
 		</script>
-
 		</div>
-
 	</body>
-
 </html>
