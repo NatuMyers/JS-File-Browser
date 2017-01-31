@@ -16,7 +16,6 @@
 		<script src="static/js/fbrowse.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/css/materialize.min.css" media="screen" title="no title">
-    <link rel="stylesheet" href="/static/css/custom.css" media="screen" title="no title">
     <link rel="stylesheet" href="/static/css/animate.css" media="screen" title="no title">
 		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Julius+Sans+One">
 
@@ -31,7 +30,14 @@
 		</script>
 	</head>
 
-	<body class="grey lighten-4">
+	<body style="
+	background: rgb(245,246,246); /* Old browserswill be supported */
+	background: -moz-linear-gradient(top,  rgba(245,246,246,1) 0%, rgba(219,220,226,1) 21%, rgba(184,186,198,1) 49%, rgba(221,223,227,1) 80%, rgba(245,246,246,1) 100%);
+	background: -webkit-linear-gradient(top,  rgba(245,246,246,1) 0%,rgba(219,220,226,1) 21%,rgba(184,186,198,1) 49%,rgba(221,223,227,1) 80%,rgba(245,246,246,1) 100%);
+	background: linear-gradient(to bottom,  rgba(245,246,246,1) 0%,rgba(219,220,226,1) 21%,rgba(184,186,198,1) 49%,rgba(221,223,227,1) 80%,rgba(245,246,246,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f6f6', endColorstr='#f5f6f6',GradientType=0 );
+
+">
 		<div class="container">
 			<span id="target"></span>
 			<pre></pre>
@@ -51,7 +57,7 @@
 					var markup = ""; // to be rendered
 					var numberOfFiles = files.length; // to render
 
-					renderView(payload)
+					renderView(payload);
 
 					// RENDER VIEW
 					function renderView(payload, markup = "", numberOfFiles = files.length, will_update = false) {
@@ -76,7 +82,7 @@
 												 <a onclick=\"window.parse(goDeeper("+ "'" + files[i].name+ "'" + ")) \" class=\"tran card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 												</div> \
 											</div> \
-										</div>"
+										</div>";
 									} else { // not folder
 										markup = markup + " \
 										 <div class=\"col s12 m64 l4\"> \
@@ -89,7 +95,7 @@
 														<div class=\"white-text\"><br>" +  files[i].name +  "<br>" + files[i].size/1000000 + " MB" + "</div>\
 													</div> \
 												</div> \
-											</div>"
+											</div>";
 									}
 							}
 
@@ -104,12 +110,12 @@
 											<a onclick=\"window.parse(goUp())\" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\"> Up A Level</a> \
 										</div> \
 									</div> \
-								</div>"
+								</div>";
 							}
 
 							// to partition it
 							if (i/3 == 0) {
-							 markup = markup + "<br>"
+							 markup = markup + "<br>";
 							}
 
 							// document.write(markup); // write the js-rendered html
@@ -139,7 +145,7 @@
 				// 3. X/Y/ -> X/Y (telling the program that trailing slashes are ok for nonroot directories. i.e: "Documents/" = "Documents"  so we're triming the slash.)
 				if ( (target.charAt(target.length - 1) == "/") && (target.length>=2) ) {
 					target = target.slice(0, -1);
-					console.log("Trailing slash removed. ") // debug
+					console.log("Trailing slash removed. "); // debug
 				}
 
 				// 4. Assign to window object
