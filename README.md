@@ -1,3 +1,5 @@
+![](https://i.gyazo.com/e43ad883dda3e621ec4217d250ffb5d3.gif)
+
 Web Dev Coding Test
 ===================
 
