@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
-
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-		<!-- this is how we connecting to the api's "files" -->
-		<script src="http://storage.googleapis.com/el-static/test/filedata.js"></script>
-		<script src="static/js/fbrowse.js"></script>
 
 		<meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -16,23 +9,26 @@
     <title>File Viewer</title>
 
     <link rel="shortcut icon" href="/static/img/favicon.ico"></link>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<!-- this is how we connecting to the api's "files" -->
+		<script src="http://storage.googleapis.com/el-static/test/filedata.js"></script>
+		<script src="static/js/fbrowse.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/css/materialize.min.css" media="screen" title="no title">
+    <link rel="stylesheet" href="/static/css/custom.css" media="screen" title="no title">
     <link rel="stylesheet" href="/static/css/animate.css" media="screen" title="no title">
 		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Julius+Sans+One">
 
-    <!-- load order is extremely important -->
     <!-- jquery THEN materialize THEN custom -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="/static/js/materialize.min.js"></script>
-
     <script src="/static/js/custom.js"></script>
 
-		<!-- how we keep track of files. this is yuuge -->
+		<!-- how we keep track of files. this is yuugely important -->
 		<script type="text/javascript">
 			window.directory = ""
 		</script>
-
 	</head>
 
 	<body class="grey lighten-4">
@@ -46,23 +42,17 @@
 				<div id="template"></div>
 
 			<script type="text/javascript">
-				// add the function to th window object because the scope is wayy to small when the js rendered html calls a function http://stackoverflow.com/questions/2223305/how-can-i-make-a-function-defined-in-jquery-ready-available-globally
-				window.parse = function myself(payload) {
+				// add the function to the window object because the scope is wayy to small when the js rendered html calls a function http://stackoverflow.com/questions/2223305/how-can-i-make-a-function-defined-in-jquery-ready-available-globally
+				window.parse = function parseFunc(payload) {
 					filedata.getFilesForPath( (payload) , function(err, files=payload){
 					console.log("Current Payload: " + payload); // for debug
 
 					// loop through all the files in the directory
 					var markup = ""; // to be rendered
-					var numberOfFiles = files.length;
+					var numberOfFiles = files.length; // to render
 
-					// we call render view like this on IF we're on the root page
-					if ( (("window.location.href".match(/#/g) || []).length) < 1 ) {
-						renderView(payload) // call it (at root)
-					} else { // if we are NOT at the root...TODO
-						renderView(payload)
-					}
 
-					// the idea is to keep calling renderView by appending stuff to payload when we get deeper
+					renderView(payload)
 
 					// RENDER VIEW
 					function renderView(payload, markup = "", numberOfFiles = files.length, will_update = false) {
@@ -75,7 +65,7 @@
 							if (files[i].isFolder) {
 									markup = markup + " \
 									 <div class=\"col s12 m64 l4\"> \
-											<div class=\"card zoomInUp shake hoverable light-blue darken-4 \"> \
+											<div class=\"card animated zoomInUp bounce hoverable light-blue darken-4 \"> \
 												<div class=\"card-image\"> \
 													<img  src=\"/static/images/folder.png\" width= \"30px\"  draggable=\"false\"> \
 												</div> \
@@ -84,19 +74,20 @@
 												\<!-- we pass the file in as a string, not a var. http://stackoverflow.com/questions/5504515/javascript-variable-is-not-defined  \
 												 and do a nested function call to render with a new payload. -->\
 												 \
-												 <a onclick=\"window.parse(goDeeper("+ "'" + files[i].name+ "'" + ")) \" class=\"card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+												 <a onclick=\"window.parse(goDeeper("+ "'" + files[i].name+ "'" + ")) \" class=\"tran card-title hoverable btn center yellow darken-2 waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
 												</div> \
 											</div> \
 										</div>"
 									} else { // not folder
 										markup = markup + " \
 										 <div class=\"col s12 m64 l4\"> \
-												<div class=\"card shake hoverable light-green darken-3 \"> \
+												<div class=\"card animated zoomInUp bounce hoverable light-green darken-3 \"> \
 													<div class=\"card-image\"> \
 														<img  src=\"/static/images/file.png\" width= \"30px\"> \
 													</div> \
 													<div class=\"card-content center\"> \
-														<a data-target=\"#filemodal\" class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">"  + files[i].name +  "</a> \
+														<a data-target=\"#filemodal\" class=\"card-title hoverable btn center  teal darken-2  waves-effect waves-light\" style=\"font-family:  'Julius Sans One', regular; font-size:160%;\">Open</a> \
+														<div class=\"white-text\"><br>" +  files[i].name +  "</div>\
 													</div> \
 												</div> \
 											</div>"
@@ -107,7 +98,7 @@
 							if (payload.length > 1) { // appears when not in root.  "/" and "" are non-root payloads
 							markup = markup + " \
 							 <div class=\"col s12 m64 l4\"> \
-									<div class=\"card shake hoverable white \"> \
+									<div class=\"card animated zoomInUp bounce  hoverable white \"> \
 										<div class=\"card-image\"> \
 										</div> \
 										<div class=\"card-content center truncate\"> \
@@ -188,7 +179,6 @@
 			function goView(filename) {
 				// Append to the end of the current payload
 				var new_payload = ""
-
 
 
 				 new_payload = current_payload.concat("/"+foldername);
