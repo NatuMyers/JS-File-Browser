@@ -1,7 +1,7 @@
 
 To run
 ===================
-Download then,
+Download/clone then,
 ```bash 
 npm install http-server -g; http-server
 ```
@@ -9,16 +9,11 @@ npm install http-server -g; http-server
 Result
 ===================
 
-
 ![](https://i.gyazo.com/e43ad883dda3e621ec4217d250ffb5d3.gif)
-
 
 
 SETTING UP/ COMPILING SASS FILES
 ===================
-
-##### Run an "npm install" to get the latest dependencies!!!
-  
 
 ##### TO COMPILE A SASS FILE AND QUICKLY CHANGE COLOR SCHEME, 
 
@@ -27,7 +22,6 @@ gem install sass; sudo gem install sass; sass --watch materialize.scss:materiali
 ```
 
 #####IN THE DIRECTORY OF the .scss file. Drag the new .css to replace the old one, and voila quick color scheming
-
 
 
 TASK GIVEN: Web Dev Coding Test
