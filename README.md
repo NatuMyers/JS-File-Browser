@@ -4,7 +4,7 @@ To Improve
 - You don't need to explicitly declare variables on the `window` object, that will happen by default for any global variable declared in the context
 - You should avoid global variables if possible, since there can be conflicts
 - You shouldn't declare inline HTML in JS strings, you should either dynamically create elements with JS, or use a templating library if you're going to actually use templates (or there's a new ES6 template strings feature)
-
+ 
 
 To run
 ===================
